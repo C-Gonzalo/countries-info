@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
-import { getAllCountries } from '../../api/services/countries.service';
+import { getAllCountries, getCountriesByRegion } from '../../api/services/countries.service';
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 
@@ -8,7 +8,7 @@ const HomePage = () => {
   const [countries, setCountries] = useState([]);
   const [countryToSearch, setCountryToSearch] = useState('');
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
-  const [region, setRegion] = useState('');
+  const [regionSelectValue, setRegionSelectValue] = useState('');
 
   useEffect(() => {
     obtainCountries();
@@ -20,6 +20,12 @@ const HomePage = () => {
     setCountries(obtainedCountries);
   };
 
+  const obtainCountriesByRegion = async (region) => {
+    const obtainedCountries = await getCountriesByRegion(region);
+
+    setCountries(obtainedCountries);
+  };
+
   const handleDisplayOptions = () => {
     console.log('Select Opened');
     setOptionsDisplayed(!optionsDisplayed);
@@ -27,8 +33,10 @@ const HomePage = () => {
 
   const handleSelectRegion = (region) => {
     console.log(`Region ${region} selected`);
-    setRegion(region);
+    setRegionSelectValue(region);
     setOptionsDisplayed(false);
+
+    obtainCountriesByRegion(region);
   };
 
   return (
@@ -51,7 +59,9 @@ const HomePage = () => {
             <div
               className="light-mode-elements w-64 flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer"
               onClick={handleDisplayOptions}>
-              <p className="light-mode-text font-[600]">{region ? region : 'Filter by Region'}</p>
+              <p className="light-mode-text font-[600]">
+                {regionSelectValue ? regionSelectValue : 'Filter by Region'}
+              </p>
               <MdKeyboardArrowDown size={22} />
             </div>
 
@@ -63,7 +73,7 @@ const HomePage = () => {
                   </p>
                 </div>
 
-                <div onClick={() => handleSelectRegion('America')}>
+                <div onClick={() => handleSelectRegion('Americas')}>
                   <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
                     America
                   </p>

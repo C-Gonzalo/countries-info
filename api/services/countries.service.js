@@ -12,3 +12,17 @@ export const getAllCountries = async () => {
     console.log(error);
   }
 };
+
+export const getCountriesByRegion = async (region) => {
+  try {
+    const response = await fetch(`https://restcountries.com/v3.1/region/${region}`);
+
+    const data = await response.json();
+    const reducedData = data.slice(0, 12);
+
+    console.log(`Countries of ${region}`, reducedData);
+    return reducedData;
+  } catch (error) {
+    console.log(error);
+  }
+};
