@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
-import { getAllCountries, getCountriesByRegion } from '../../api/services/countries.service';
+import {
+  getAllCountries,
+  getCountriesByRegion,
+  getCountryByName,
+} from '../../api/services/countries.service';
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 
@@ -26,6 +30,12 @@ const HomePage = () => {
     setCountries(obtainedCountries);
   };
 
+  const searchCountryByName = async () => {
+    const country = await getCountryByName(countryToSearch);
+
+    console.log(country);
+  };
+
   const handleDisplayOptions = () => {
     console.log('Select Opened');
     setOptionsDisplayed(!optionsDisplayed);
@@ -37,6 +47,13 @@ const HomePage = () => {
     setOptionsDisplayed(false);
 
     obtainCountriesByRegion(region);
+  };
+
+  const handleSearch = async (e) => {
+    if (e.key === 'Enter' && countryToSearch.length > 0) {
+      console.log(`buscando... ${countryToSearch}`);
+      searchCountryByName();
+    }
   };
 
   return (
@@ -52,6 +69,7 @@ const HomePage = () => {
               placeholder="Search for a country..."
               className="py-5 pl-4 w-full font-[600] outline-none"
               onChange={(e) => setCountryToSearch(e.target.value)}
+              onKeyDown={handleSearch}
             />
           </div>
 

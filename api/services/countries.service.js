@@ -26,3 +26,16 @@ export const getCountriesByRegion = async (region) => {
     console.log(error);
   }
 };
+
+export const getCountryByName = async (name) => {
+  try {
+    const response = await fetch(`https://restcountries.com/v3.1/name/${name}`);
+
+    const data = await response.json();
+
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
