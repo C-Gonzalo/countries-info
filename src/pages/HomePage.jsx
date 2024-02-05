@@ -11,6 +11,7 @@ import Header from '../components/Header';
 const HomePage = () => {
   const [countries, setCountries] = useState([]);
   const [countryToSearch, setCountryToSearch] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
 
@@ -31,9 +32,10 @@ const HomePage = () => {
   };
 
   const searchCountryByName = async () => {
-    const country = await getCountryByName(countryToSearch);
+    const result = await getCountryByName(countryToSearch);
 
-    console.log(country);
+    setSearchResults(result);
+    console.log(result);
   };
 
   const handleDisplayOptions = () => {
@@ -62,15 +64,37 @@ const HomePage = () => {
 
       <div className="px-28 py-14">
         <div className="flex justify-between">
-          <div className="light-mode-elements flex items-center gap-2 w-[32rem] px-6 rounded-md shadow-md">
-            <MdOutlineSearch className="light-mode-input" size={30} />
-            <input
-              type="text"
-              placeholder="Search for a country..."
-              className="py-5 pl-4 w-full font-[600] outline-none"
-              onChange={(e) => setCountryToSearch(e.target.value)}
-              onKeyDown={handleSearch}
-            />
+          <div>
+            <div className="light-mode-elements flex items-center gap-2 w-[32rem] px-6 rounded-md shadow-md">
+              <label htmlFor="countrySearch">
+                <MdOutlineSearch className="light-mode-input" size={28} />
+              </label>
+              <input
+                id="countrySearch"
+                type="text"
+                placeholder="Search for a country..."
+                className="py-5 pl-4 w-full font-[600] outline-none"
+                onChange={(e) => setCountryToSearch(e.target.value)}
+                onKeyDown={handleSearch}
+              />
+            </div>
+
+            {searchResults && (
+              <div className="light-mode-elements absolute w-[23rem] mt-2 rounded-md shadow-lg">
+                {searchResults.map((country) => (
+                  <div
+                    key={country.tld[0]}
+                    className="pl-6 py-5 flex items-center gap-4 cursor-pointer hover:bg-slate-200">
+                    <img
+                      src={country?.flags?.png}
+                      alt={`Bandera de ${country.name.common}`}
+                      className="w-[60px]"
+                    />
+                    <p className="light-mode-text font-[600] text-lg">{country?.name?.common}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
