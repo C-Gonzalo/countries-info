@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.light-mode-bg {
+  background-color: hsl(0, 0%, 98%);
+}
+
+.dark-mode-bg {
+  background-color: hsl(207, 26%, 17%);
+}
+
+.light-mode-text {
+  color: hsl(200, 15%, 8%);
+}
+
+.dark-mode-text {
+  color: hsl(0, 0%, 100%);
+}
+
+.light-mode-elements {
+  background-color: hsl(0, 0%, 100%);
+}
+
+.dark-mode-elements {
+  background-color: hsl(209, 23%, 22%);
+}
+
+.light-mode-input {
+  color: hsl(0, 0%, 52%);
+}
