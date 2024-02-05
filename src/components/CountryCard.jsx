@@ -1,20 +1,30 @@
-const CountryCard = () => {
+/* eslint-disable react/prop-types */
+const CountryCard = ({ country }) => {
   return (
-    <div className="light-mode-elements w-80 rounded-md shadow-md cursor-pointer">
-      <div className="bg-sky-500 h-48 rounded-t-md"></div>
+    <div className="light-mode-elements rounded-lg shadow-md cursor-pointer">
+      {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
+
+      <img
+        className="w-[350px] rounded-t-lg"
+        src={country.flags.png}
+        alt={`Bandera de ${country.name.common}`}
+      />
 
       <div className="px-6 pt-6 pb-12">
-        <h4 className="light-mode-text font-[800] text-2xl">Argentina</h4>
+        <h4 className="light-mode-text font-[800] text-2xl">{country.name.common}</h4>
 
         <div className="mt-6">
           <p className="py-[2px]">
-            <span className="light-mode-text font-[600]">Population:</span> 45,810,000
+            <span className="light-mode-text font-[600]">Population: </span>
+            {country.population.toLocaleString()}
           </p>
           <p className="py-[2px]">
-            <span className="light-mode-text font-[600]">Region:</span> Americas
+            <span className="light-mode-text font-[600]">Region: </span>
+            {country.region}
           </p>
           <p className="py-[2px]">
-            <span className="light-mode-text font-[600]">Capital:</span> Buenos Aires
+            <span className="light-mode-text font-[600]">Capital: </span>
+            {country.capital[0]}
           </p>
         </div>
       </div>

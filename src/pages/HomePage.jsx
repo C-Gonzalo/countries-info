@@ -1,12 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
+import { getAllCountries } from '../../api/services/countries.service';
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 
 const HomePage = () => {
+  const [countries, setCountries] = useState([]);
   const [countryToSearch, setCountryToSearch] = useState('');
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [region, setRegion] = useState('');
+
+  useEffect(() => {
+    obtainCountries();
+  }, []);
+
+  const obtainCountries = async () => {
+    const obtainedCountries = await getAllCountries();
+
+    setCountries(obtainedCountries);
+  };
 
   const handleDisplayOptions = () => {
     console.log('Select Opened');
@@ -23,8 +35,8 @@ const HomePage = () => {
     <div className="light-mode-bg h-screen">
       <Header />
 
-      <div className="px-24">
-        <div className="mt-14 flex justify-between">
+      <div className="px-28 py-14">
+        <div className="flex justify-between">
           <div className="light-mode-elements flex items-center gap-2 w-[32rem] px-6 rounded-md shadow-md">
             <MdOutlineSearch className="light-mode-input" size={30} />
             <input
@@ -92,8 +104,9 @@ const HomePage = () => {
           </div> */}
         </div>
 
-        <div className="mt-14">
-          <CountryCard />
+        <div className="grid grid-cols-4 mt-14 gap-24">
+          {countries &&
+            countries.map((country) => <CountryCard key={country.tld[0]} country={country} />)}
         </div>
       </div>
     </div>
