@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
+import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 
 const HomePage = () => {
@@ -22,13 +23,13 @@ const HomePage = () => {
     <div className="light-mode-bg h-screen">
       <Header />
 
-      <div className="px-20">
-        <div className="mt-10 flex justify-between">
+      <div className="px-24">
+        <div className="mt-14 flex justify-between">
           <div className="light-mode-elements flex items-center gap-2 w-[32rem] px-6 rounded-md shadow-md">
             <MdOutlineSearch className="light-mode-input" size={30} />
             <input
               type="text"
-              placeholder="Search for a country"
+              placeholder="Search for a country..."
               className="py-5 pl-4 w-full font-[600] outline-none"
               onChange={(e) => setCountryToSearch(e.target.value)}
             />
@@ -89,6 +90,10 @@ const HomePage = () => {
               <option value="africa">Oceania</option>
             </select>
           </div> */}
+        </div>
+
+        <div className="mt-14">
+          <CountryCard />
         </div>
       </div>
     </div>
