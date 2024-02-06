@@ -173,7 +173,7 @@ const HomePage = () => {
           </div> */}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-20">
           {countries &&
             countries.map((country) => <CountryCard key={country.tld[0]} country={country} />)}
         </div>

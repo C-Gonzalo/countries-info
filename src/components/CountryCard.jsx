@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const CountryCard = ({ country }) => {
   return (
-    <div className="light-mode-elements w-[320px] lg:w-[400px] xl:w-[90%] mx-auto rounded-lg shadow-md cursor-pointer">
+    <div className="light-mode-elements w-[320px] lg:w-[400px] xl:w-[100%] mx-auto rounded-lg shadow-md cursor-pointer hover:transition-all hover:duration-200 hover:scale-110 hover:shadow-2xl">
       {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
 
       <img
