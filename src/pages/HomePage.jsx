@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
 import {
   getAllCountries,
@@ -15,8 +15,25 @@ const HomePage = () => {
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
 
+  const ref = useRef();
+
   useEffect(() => {
     obtainCountries();
+  }, []);
+
+  useEffect(() => {
+    const checkIfClickedOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOptionsDisplayed(false);
+        setSearchResults(false);
+      }
+    };
+
+    document.addEventListener('click', checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener('click', checkIfClickedOutside);
+    };
   }, []);
 
   const obtainCountries = async () => {
@@ -84,7 +101,7 @@ const HomePage = () => {
                 {searchResults.map((country) => (
                   <div
                     key={country.tld[0]}
-                    className="pl-6 py-5 flex items-center gap-4 cursor-pointer hover:bg-slate-200">
+                    className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
                     <img
                       src={country?.flags?.png}
                       alt={`Bandera de ${country.name.common}`}
@@ -97,7 +114,7 @@ const HomePage = () => {
             )}
           </div>
 
-          <div>
+          <div ref={ref}>
             <div
               className="light-mode-elements w-64 flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer"
               onClick={handleDisplayOptions}>
