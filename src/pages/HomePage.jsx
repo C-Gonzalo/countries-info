@@ -104,7 +104,7 @@ const HomePage = () => {
                     className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
                     <img
                       src={country?.flags?.png}
-                      alt={`Bandera de ${country.name.common}`}
+                      alt={`Flag of ${country?.name?.common}`}
                       className="w-[60px]"
                     />
                     <p className="light-mode-text font-[600] text-lg">{country?.name?.common}</p>

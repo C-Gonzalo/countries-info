@@ -10,7 +10,7 @@ const CountryCard = ({ country }) => {
         <img
           className="w-[320px] lg:w-[400px] rounded-t-lg"
           src={country.flags.png}
-          alt={`Bandera de ${country.name.common}`}
+          alt={`Flag of ${country.name.common}`}
         />
 
         <div className="px-6 pt-6 pb-12">

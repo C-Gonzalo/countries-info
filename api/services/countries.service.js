@@ -48,7 +48,7 @@ export const getCountryByExactName = async (name) => {
 
     const data = await response.json();
 
-    return data;
+    return data[0];
   } catch (error) {
     console.log(error);
   }
