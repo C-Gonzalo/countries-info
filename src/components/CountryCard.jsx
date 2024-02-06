@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 const CountryCard = ({ country }) => {
   return (
-    <div className="light-mode-elements rounded-lg shadow-md cursor-pointer">
+    <div className="light-mode-elements w-[320px] lg:w-[400px] xl:w-[90%] mx-auto rounded-lg shadow-md cursor-pointer">
       {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
 
       <img
-        className="w-[350px] rounded-t-lg"
+        className="w-[320px] lg:w-[400px] rounded-t-lg"
         src={country.flags.png}
         alt={`Bandera de ${country.name.common}`}
       />

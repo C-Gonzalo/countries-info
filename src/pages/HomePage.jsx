@@ -79,10 +79,10 @@ const HomePage = () => {
     <div className="light-mode-bg h-screen">
       <Header />
 
-      <div className="px-28 py-14">
-        <div className="flex justify-between">
-          <div>
-            <div className="light-mode-elements flex items-center gap-2 w-[32rem] px-6 rounded-md shadow-md">
+      <div className="px-4 md:px-14 xl:px-28 py-14">
+        <div className="flex flex-col gap-16 lg:flex-row justify-between ">
+          <div className="max-w-[32rem] md:w-[32rem]">
+            <div className="light-mode-elements flex items-center gap-2 px-6 rounded-md shadow-md">
               <label htmlFor="countrySearch">
                 <MdOutlineSearch className="light-mode-input" size={28} />
               </label>
@@ -97,7 +97,7 @@ const HomePage = () => {
             </div>
 
             {searchResults && (
-              <div className="light-mode-elements absolute w-[23rem] mt-2 rounded-md shadow-lg">
+              <div className="light-mode-elements absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg">
                 {searchResults.map((country) => (
                   <div
                     key={country.tld[0]}
@@ -114,9 +114,9 @@ const HomePage = () => {
             )}
           </div>
 
-          <div ref={ref}>
+          <div className="w-64" ref={ref}>
             <div
-              className="light-mode-elements w-64 flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer"
+              className="light-mode-elements flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer"
               onClick={handleDisplayOptions}>
               <p className="light-mode-text font-[600]">
                 {regionSelectValue ? regionSelectValue : 'Filter by Region'}
@@ -173,7 +173,7 @@ const HomePage = () => {
           </div> */}
         </div>
 
-        <div className="grid grid-cols-4 mt-14 gap-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-12">
           {countries &&
             countries.map((country) => <CountryCard key={country.tld[0]} country={country} />)}
         </div>
