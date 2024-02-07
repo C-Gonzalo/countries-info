@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 const CountryCard = ({ country }) => {
   return (
     <Link to={`/country-details/${country.name.common}`}>
-      <div className="light-mode-elements w-[320px] lg:w-[400px] xl:w-[100%] mx-auto rounded-lg shadow-md cursor-pointer hover:transition-all hover:duration-200 hover:scale-110 hover:shadow-2xl">
+      <div className="light-mode-elements w-[320px] lg:w-[400px] xl:w-[100%] mx-auto rounded-lg shadow-md cursor-pointer transition-all hover:duration-200 hover:scale-110 hover:shadow-2xl">
         {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
 
         <img
           className="w-[320px] lg:w-[400px] rounded-t-lg"
           src={country.flags.png}
-          alt={`Bandera de ${country.name.common}`}
+          alt={`Flag of ${country.name.common}`}
         />
 
         <div className="px-6 pt-6 pb-12">
