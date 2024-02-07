@@ -17,7 +17,9 @@ export const getAllCountries = async () => {
 
 export const getCountriesByRegion = async (region) => {
   try {
-    const response = await fetch(`https://restcountries.com/v3.1/region/${region}`);
+    const response = await fetch(
+      `https://restcountries.com/v3.1/region/${region}?fields=name,flags,population,region,capital,tld`
+    );
 
     const data = await response.json();
     const reducedData = data.slice(0, 12);

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 import {
   getAllCountries,
   getCountriesByRegion,
@@ -99,15 +100,19 @@ const HomePage = () => {
             {searchResults && (
               <div className="light-mode-elements absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg">
                 {searchResults.map((country) => (
-                  <div
-                    key={country.tld[0]}
-                    className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
-                    <img
-                      src={country?.flags?.png}
-                      alt={`Flag of ${country?.name?.common}`}
-                      className="w-[60px]"
-                    />
-                    <p className="light-mode-text font-[600] text-lg">{country?.name?.common}</p>
+                  <div key={country.tld[0]}>
+                    <Link to={`/country-details/${country.name.common}`}>
+                      <div className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
+                        <img
+                          src={country?.flags?.png}
+                          alt={`Flag of ${country?.name?.common}`}
+                          className="w-[60px]"
+                        />
+                        <p className="light-mode-text font-[600] text-lg">
+                          {country?.name?.common}
+                        </p>
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>
