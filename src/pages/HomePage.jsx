@@ -15,12 +15,13 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
+  const [page, setPage] = useState(0);
 
   const ref = useRef();
 
   useEffect(() => {
-    obtainCountries();
-  }, []);
+    obtainCountries(page);
+  }, [page]);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -37,10 +38,10 @@ const HomePage = () => {
     };
   }, []);
 
-  const obtainCountries = async () => {
+  const obtainCountries = async (page) => {
     const obtainedCountries = await getAllCountries();
 
-    setCountries(obtainedCountries);
+    setCountries(obtainedCountries[page]);
   };
 
   const obtainCountriesByRegion = async (region) => {

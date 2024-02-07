@@ -6,10 +6,21 @@ export const getAllCountries = async () => {
 
     const data = await response.json();
 
-    const reducedData = data.slice(0, 12);
+    // Function to split data on arrays of subarrays in onrder to make a pagination
+    const splitResults = (results, subarraySize) => {
+      const subarrays = [];
+      for (let i = 0; i < results.length; i += subarraySize) {
+        subarrays.push(results.slice(i, i + subarraySize));
+      }
+      return subarrays;
+    };
 
-    console.log(reducedData);
-    return reducedData;
+    // Array of arrays with 16 countries each
+    const resultsSplited = splitResults(data, 16);
+
+    console.log(resultsSplited);
+
+    return resultsSplited;
   } catch (error) {
     console.log(error);
   }
