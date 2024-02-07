@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import { MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
+import { MdArrowBack, MdArrowForward, MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import {
   getAllCountries,
@@ -10,6 +11,7 @@ import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 
 const HomePage = () => {
+  const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
   const [countryToSearch, setCountryToSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -20,8 +22,12 @@ const HomePage = () => {
   const ref = useRef();
 
   useEffect(() => {
-    obtainCountries(page);
-  }, [page]);
+    obtainCountries();
+  }, []);
+
+  useEffect(() => {
+    setCountries(allCountries[page]);
+  }, [allCountries, page]);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -38,10 +44,10 @@ const HomePage = () => {
     };
   }, []);
 
-  const obtainCountries = async (page) => {
+  const obtainCountries = async () => {
     const obtainedCountries = await getAllCountries();
 
-    setCountries(obtainedCountries[page]);
+    setAllCountries(obtainedCountries);
   };
 
   const obtainCountriesByRegion = async (region) => {
@@ -77,6 +83,14 @@ const HomePage = () => {
     }
   };
 
+  const handlePage = (page) => {
+    if (page > 0 && page <= 15) {
+      setPage(page);
+    } else {
+      console.log('no se puede ir ma patra o padelante perro');
+    }
+  };
+
   return (
     <div className="light-mode-bg h-screen">
       <Header />
@@ -101,7 +115,7 @@ const HomePage = () => {
             {searchResults && (
               <div className="light-mode-elements absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg">
                 {searchResults.map((country) => (
-                  <div key={country.tld[0]}>
+                  <div key={country.cca3}>
                     <Link to={`/country-details/${country.name.common}`}>
                       <div className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
                         <img
@@ -181,7 +195,69 @@ const HomePage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-20">
           {countries &&
-            countries.map((country) => <CountryCard key={country.tld[0]} country={country} />)}
+            countries.map((country) => <CountryCard key={country.cca3} country={country} />)}
+        </div>
+
+        <div className="flex justify-center gap-5 mt-20">
+          <button
+            className="text-md light-mode-text font-[600]"
+            onClick={() => handlePage(page - 1)}>
+            <MdArrowBack size={26} color="#28313d" className="transition-all hover:scale-125" />
+          </button>
+
+          <div className="flex gap-3">
+            <button
+              className={`border-[1px] px-2 rounded-md  ${
+                page === 0
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(0)}>
+              1
+            </button>
+            <button
+              className={`border-[1px] px-2 rounded-md  ${
+                page === 1
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black'
+              }`}
+              onClick={() => setPage(1)}>
+              2
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page === 2
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(2)}>
+              3
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page === 3
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(3)}>
+              4
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page >= 4
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(4)}>
+              {page > 4 ? page + 1 : 5}
+            </button>
+          </div>
+
+          <button
+            className="text-md light-mode-text font-[600]"
+            onClick={() => handlePage(page + 1)}>
+            <MdArrowForward size={26} color="#28313d" className="transition-all hover:scale-125" />
+          </button>
         </div>
       </div>
     </div>

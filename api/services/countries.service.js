@@ -1,7 +1,7 @@
 export const getAllCountries = async () => {
   try {
     const response = await fetch(
-      'https://restcountries.com/v3.1/all?fields=name,flags,population,region,capital,tld'
+      'https://restcountries.com/v3.1/all?fields=name,flags,population,region,capital,cca3'
     );
 
     const data = await response.json();
@@ -29,7 +29,7 @@ export const getAllCountries = async () => {
 export const getCountriesByRegion = async (region) => {
   try {
     const response = await fetch(
-      `https://restcountries.com/v3.1/region/${region}?fields=name,flags,population,region,capital,tld`
+      `https://restcountries.com/v3.1/region/${region}?fields=name,flags,population,region,capital,cca3`
     );
 
     const data = await response.json();
@@ -45,7 +45,7 @@ export const getCountriesByRegion = async (region) => {
 export const getCountryByName = async (name) => {
   try {
     const response = await fetch(
-      `https://restcountries.com/v3.1/name/${name}?fields=name,flags,tld`
+      `https://restcountries.com/v3.1/name/${name}?fields=name,flags,cca3`
     );
 
     const data = await response.json();
