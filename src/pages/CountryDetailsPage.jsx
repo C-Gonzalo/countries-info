@@ -56,7 +56,7 @@ const CountryDetailsPage = () => {
     console.log(obtainedCountry);
     setCountry(obtainedCountry);
     console.log(obtainedBorder);
-    if (borderCountries !== undefined) {
+    if (borderCountries) {
       setBorderCountries(obtainedBorder);
     }
   };
@@ -84,7 +84,7 @@ const CountryDetailsPage = () => {
       <div className="light-mode-text px-6 md:px-14 xl:px-28 py-4 md:py-14 xl:py-8 mt-8">
         <div className="flex">
           <div
-            className="light-mode-elements flex items-center gap-2 py-2 pl-4 pr-6 rounded-md shadow-md cursor-pointer hover:shadow-xl transition-all duration-300"
+            className="light-mode-elements flex items-center gap-2 py-2 pl-4 pr-6 rounded-md shadow-md cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105"
             onClick={() => navigate(-1)}>
             <IoIosArrowRoundBack size={30} />
             <p className="font-[600]">Back</p>
@@ -146,7 +146,7 @@ const CountryDetailsPage = () => {
 
               <div className="flex flex-col md:flex-row gap-5 md:items-center">
                 <p className=" text-lg font-[600]">Border Countries: </p>
-                <div className="flex items-center py-1 md:px-3 gap-6 flex-wrap xl:overflow-y-auto xl:max-h-[100px]">
+                <div className="flex items-center py-2 md:px-3 gap-6 flex-wrap xl:overflow-y-auto xl:max-h-[100px]">
                   {borderCountries.length > 0 &&
                     borderCountries.map((bCountry, index) => (
                       <div key={index}>

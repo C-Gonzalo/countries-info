@@ -1,15 +1,26 @@
 export const getAllCountries = async () => {
   try {
     const response = await fetch(
-      'https://restcountries.com/v3.1/all?fields=name,flags,population,region,capital,tld'
+      'https://restcountries.com/v3.1/all?fields=name,flags,population,region,capital,cca3'
     );
 
     const data = await response.json();
 
-    const reducedData = data.slice(0, 12);
+    // Function to split data on arrays of subarrays in onrder to make a pagination
+    const splitResults = (results, subarraySize) => {
+      const subarrays = [];
+      for (let i = 0; i < results.length; i += subarraySize) {
+        subarrays.push(results.slice(i, i + subarraySize));
+      }
+      return subarrays;
+    };
 
-    console.log(reducedData);
-    return reducedData;
+    // Array of arrays with 16 countries each
+    const resultsSplited = splitResults(data, 16);
+
+    console.log(resultsSplited);
+
+    return resultsSplited;
   } catch (error) {
     console.log(error);
   }
@@ -17,7 +28,9 @@ export const getAllCountries = async () => {
 
 export const getCountriesByRegion = async (region) => {
   try {
-    const response = await fetch(`https://restcountries.com/v3.1/region/${region}`);
+    const response = await fetch(
+      `https://restcountries.com/v3.1/region/${region}?fields=name,flags,population,region,capital,cca3`
+    );
 
     const data = await response.json();
     const reducedData = data.slice(0, 12);
@@ -31,7 +44,9 @@ export const getCountriesByRegion = async (region) => {
 
 export const getCountryByName = async (name) => {
   try {
-    const response = await fetch(`https://restcountries.com/v3.1/name/${name}`);
+    const response = await fetch(
+      `https://restcountries.com/v3.1/name/${name}?fields=name,flags,cca3`
+    );
 
     const data = await response.json();
 
