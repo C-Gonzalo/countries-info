@@ -1,11 +1,12 @@
 import { FaMoon } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
     <div className="light-mode-elements flex justify-between items-center px-4 md:px-14 xl:px-28  py-8 shadow-md">
-      <div>
+      <Link to={'/'}>
         <h1 className="light-mode-text text-lg md:text-3xl font-[800]">Where in the world?</h1>
-      </div>
+      </Link>
 
       <div
         className="flex items-center gap-2 cursor-pointer"

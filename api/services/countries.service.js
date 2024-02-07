@@ -53,3 +53,26 @@ export const getCountryByExactName = async (name) => {
     console.log(error);
   }
 };
+
+export const getCountryNameByCode = async (countriesCode) => {
+  if (countriesCode) {
+    try {
+      const countriesName = [];
+
+      for (const code of countriesCode) {
+        const requestPromise = fetch(
+          `https://restcountries.com/v3.1/alpha/${code}/?fields=name`
+        ).then((response) => response.json());
+
+        countriesName.push(requestPromise);
+      }
+
+      const responses = await Promise.all(countriesName);
+
+      return responses;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+};
