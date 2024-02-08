@@ -1,3 +1,5 @@
+import { splitResults } from '../../src/helpers';
+
 export const getAllCountries = async () => {
   try {
     const response = await fetch(
@@ -5,15 +7,6 @@ export const getAllCountries = async () => {
     );
 
     const data = await response.json();
-
-    // Function to split data on arrays of subarrays in onrder to make a pagination
-    const splitResults = (results, subarraySize) => {
-      const subarrays = [];
-      for (let i = 0; i < results.length; i += subarraySize) {
-        subarrays.push(results.slice(i, i + subarraySize));
-      }
-      return subarrays;
-    };
 
     // Array of arrays with 16 countries each
     const resultsSplited = splitResults(data, 16);
@@ -33,10 +26,15 @@ export const getCountriesByRegion = async (region) => {
     );
 
     const data = await response.json();
-    const reducedData = data.slice(0, 12);
 
-    console.log(`Countries of ${region}`, reducedData);
-    return reducedData;
+    console.log('DATA', data);
+
+    // Array of arrays with 16 countries each
+    const resultsSplited = splitResults(data, 16);
+
+    console.log(`Countries of ${region}`, resultsSplited);
+
+    return resultsSplited;
   } catch (error) {
     console.log(error);
   }
@@ -50,7 +48,12 @@ export const getCountryByName = async (name) => {
 
     const data = await response.json();
 
-    console.log(data);
+    if (data.length > 6) {
+      const reducedData = data.splice(0, 6);
+      console.log(reducedData);
+      return reducedData;
+    }
+
     return data;
   } catch (error) {
     console.log(error);
