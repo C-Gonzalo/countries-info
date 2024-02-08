@@ -81,17 +81,17 @@ const CountryDetailsPage = () => {
     <div className="light-mode-bg min-h-screen">
       <Header />
 
-      <div className="light-mode-text px-6 md:px-14 xl:px-28 py-4 md:py-14 xl:py-8 mt-8">
-        <div className="flex">
-          <div
-            className="light-mode-elements flex items-center gap-2 py-2 pl-4 pr-6 rounded-md shadow-md cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105"
-            onClick={() => navigate(-1)}>
-            <IoIosArrowRoundBack size={30} />
-            <p className="font-[600]">Back</p>
+      {country && country?.flags?.svg && borderCountries && (
+        <div className="light-mode-text px-6 md:px-14 xl:px-28 py-4 md:py-14 xl:py-8 mt-8">
+          <div className="flex">
+            <div
+              className="light-mode-elements flex items-center gap-2 py-2 pl-4 pr-6 rounded-md shadow-md cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105"
+              onClick={() => navigate(-1)}>
+              <IoIosArrowRoundBack size={30} />
+              <p className="font-[600]">Back</p>
+            </div>
           </div>
-        </div>
 
-        {country && (
           <div className="xl:flex mt-16 md:mt-24 xl:mt-12 gap-10">
             <div className=" xl:w-1/2 flex items-center md:justify-center xl:justify-start">
               <img
@@ -161,8 +161,8 @@ const CountryDetailsPage = () => {
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

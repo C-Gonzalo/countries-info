@@ -9,7 +9,7 @@ const CountryCard = ({ country }) => {
           {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
 
           <img
-            className="w-[320px] lg:w-[400px] rounded-t-lg"
+            className="w-[320px] lg:w-[400px] max-h-[272px] rounded-t-lg"
             src={country.flags.png}
             alt={`Flag of ${country.name.common}`}
           />

@@ -1,6 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
-import { MdArrowBack, MdArrowForward, MdKeyboardArrowDown, MdOutlineSearch } from 'react-icons/md';
+import {
+  MdArrowBack,
+  MdArrowForward,
+  MdClose,
+  MdKeyboardArrowDown,
+  MdOutlineSearch,
+} from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import {
   getAllCountries,
@@ -13,6 +19,7 @@ import Header from '../components/Header';
 const HomePage = () => {
   const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [searching, setSearching] = useState(false);
   const [countryToSearch, setCountryToSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
@@ -45,22 +52,28 @@ const HomePage = () => {
   }, []);
 
   const obtainCountries = async () => {
-    const obtainedCountries = await getAllCountries();
+    const obtainedAllCountries = await getAllCountries();
 
-    setAllCountries(obtainedCountries);
+    setAllCountries(obtainedAllCountries);
   };
 
   const obtainCountriesByRegion = async (region) => {
-    const obtainedCountries = await getCountriesByRegion(region);
+    const obtainedRegionCountries = await getCountriesByRegion(region);
 
-    setCountries(obtainedCountries);
+    setAllCountries(obtainedRegionCountries);
   };
 
   const searchCountryByName = async () => {
     const result = await getCountryByName(countryToSearch);
 
-    setSearchResults(result);
-    console.log(result);
+    if (result.status != 404) {
+      setSearchResults(result);
+      console.log(result);
+      setSearching(false);
+      return;
+    }
+    alert('not found');
+    setSearching(false);
   };
 
   const handleDisplayOptions = () => {
@@ -68,26 +81,39 @@ const HomePage = () => {
     setOptionsDisplayed(!optionsDisplayed);
   };
 
-  const handleSelectRegion = (region) => {
+  const handleSelectRegion = async (region) => {
     console.log(`Region ${region} selected`);
     setRegionSelectValue(region);
     setOptionsDisplayed(false);
 
-    obtainCountriesByRegion(region);
+    await obtainCountriesByRegion(region);
+
+    setPage(0);
   };
 
-  const handleSearch = async (e) => {
-    if (e.key === 'Enter' && countryToSearch.length > 0) {
+  const handleSearch = async () => {
+    if (countryToSearch.length > 0) {
+      setSearching(true);
       console.log(`buscando... ${countryToSearch}`);
-      searchCountryByName();
+      await searchCountryByName();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && countryToSearch.length > 0) {
+      handleSearch();
     }
   };
 
   const handlePage = (page) => {
-    if (page > 0 && page <= 15) {
+    if (page >= 0 && page < allCountries.length) {
       setPage(page);
-    } else {
-      console.log('no se puede ir ma patra o padelante perro');
+    }
+  };
+
+  const handleClearInput = () => {
+    if (countryToSearch.length > 0) {
+      setCountryToSearch('');
     }
   };
 
@@ -99,20 +125,56 @@ const HomePage = () => {
         <div className="flex flex-col gap-16 lg:flex-row justify-between ">
           <div className="max-w-[32rem] md:w-[32rem]">
             <div className="light-mode-elements flex items-center gap-2 px-6 rounded-md shadow-md">
-              <label htmlFor="countrySearch">
-                <MdOutlineSearch className="light-mode-input" size={28} />
-              </label>
+              {searching ? (
+                <div className="sk-circle">
+                  <div className="sk-circle1 sk-child"></div>
+                  <div className="sk-circle2 sk-child"></div>
+                  <div className="sk-circle3 sk-child"></div>
+                  <div className="sk-circle4 sk-child"></div>
+                  <div className="sk-circle5 sk-child"></div>
+                  <div className="sk-circle6 sk-child"></div>
+                  <div className="sk-circle7 sk-child"></div>
+                  <div className="sk-circle8 sk-child"></div>
+                  <div className="sk-circle9 sk-child"></div>
+                  <div className="sk-circle10 sk-child"></div>
+                  <div className="sk-circle11 sk-child"></div>
+                  <div className="sk-circle12 sk-child"></div>
+                </div>
+              ) : (
+                <div>
+                  <MdOutlineSearch
+                    className={
+                      countryToSearch.length > 0 && 'transition-all hover:scale-125 cursor-pointer'
+                    }
+                    size={28}
+                    color={countryToSearch.length > 0 ? '#28313d' : '#989fa8'}
+                    onClick={handleSearch}
+                  />
+                </div>
+              )}
+
               <input
                 id="countrySearch"
                 type="text"
+                value={countryToSearch}
                 placeholder="Search for a country..."
                 className="py-5 pl-4 w-full font-[600] outline-none"
                 onChange={(e) => setCountryToSearch(e.target.value)}
-                onKeyDown={handleSearch}
+                onKeyDown={handleKeyDown}
               />
+              <div>
+                <MdClose
+                  className={`light-mode-input ${
+                    countryToSearch.length > 0 && 'transition-all hover:scale-125 cursor-pointer'
+                  }`}
+                  size={24}
+                  color={countryToSearch.length > 0 ? '#28313d' : '#989fa8'}
+                  onClick={handleClearInput}
+                />
+              </div>
             </div>
 
-            {searchResults && (
+            {searchResults.length > 0 && (
               <div className="light-mode-elements absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg">
                 {searchResults.map((country) => (
                   <div key={country.cca3}>
@@ -198,23 +260,30 @@ const HomePage = () => {
             countries.map((country) => <CountryCard key={country.cca3} country={country} />)}
         </div>
 
-        <div className="flex justify-center gap-5 mt-20">
-          <button
-            className="text-md light-mode-text font-[600]"
+        <div className="flex justify-center gap-5 mt-24">
+          <div
+            className={`${page > 0 && 'cursor-pointer'} text-md light-mode-text font-[600]`}
             onClick={() => handlePage(page - 1)}>
-            <MdArrowBack size={26} color="#28313d" className="transition-all hover:scale-125" />
-          </button>
+            <MdArrowBack
+              size={26}
+              color={page == 0 ? '#989fa8' : '#28313d'}
+              className={page > 0 && 'transition-all hover:scale-125'}
+            />
+          </div>
 
           <div className="flex gap-3">
-            <button
-              className={`border-[1px] px-2 rounded-md  ${
+            {/* {allCountries.map((ctr, index) => ( */}
+            <div
+              className={`border-[1px] px-2 rounded-md cursor-pointer  ${
                 page === 0
                   ? 'bg-slate-100 text-black border-black'
                   : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
               }`}
               onClick={() => setPage(0)}>
               1
-            </button>
+            </div>
+            {/* ))} */}
+
             <button
               className={`border-[1px] px-2 rounded-md  ${
                 page === 1
@@ -244,20 +313,53 @@ const HomePage = () => {
             </button>
             <button
               className={` border-[1px] px-2 rounded-md ${
-                page >= 4
+                page === 4
                   ? 'bg-slate-100 text-black border-black'
                   : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
               }`}
               onClick={() => setPage(4)}>
-              {page > 4 ? page + 1 : 5}
+              5
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page === 5
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(5)}>
+              6
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page === 6
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(6)}>
+              7
+            </button>
+            <button
+              className={` border-[1px] px-2 rounded-md ${
+                page >= 7
+                  ? 'bg-slate-100 text-black border-black'
+                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+              }`}
+              onClick={() => setPage(7)}>
+              {page > 7 ? page + 1 : 8}
             </button>
           </div>
 
-          <button
-            className="text-md light-mode-text font-[600]"
+          <div
+            className={`${
+              page + 1 < allCountries.length && 'cursor-pointer'
+            } text-md light-mode-text font-[600]`}
             onClick={() => handlePage(page + 1)}>
-            <MdArrowForward size={26} color="#28313d" className="transition-all hover:scale-125" />
-          </button>
+            <MdArrowForward
+              size={26}
+              color={page + 1 < allCountries.length ? '#28313d' : '#989fa8'}
+              className={page + 1 < allCountries.length && 'transition-all hover:scale-125'}
+            />
+          </div>
         </div>
       </div>
     </div>
