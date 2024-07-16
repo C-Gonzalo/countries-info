@@ -8,6 +8,8 @@ import {
   MdOutlineSearch,
 } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   getAllCountries,
   getCountriesByRegion,
@@ -21,9 +23,12 @@ import useThemeMode from '../hooks/useThemeMode';
 const HomePage = () => {
   const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
+
   const [searching, setSearching] = useState(false);
   const [countryToSearch, setCountryToSearch] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+  const [showSearchResult, setShowSearchResult] = useState(false);
+
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
   const [pageIndex, setPageIndex] = useState(0);
@@ -31,6 +36,8 @@ const HomePage = () => {
   const { themeMode } = useThemeMode();
 
   const ref = useRef();
+
+  const regions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
 
   useEffect(() => {
     obtainCountries();
@@ -44,7 +51,8 @@ const HomePage = () => {
     const checkIfClickedOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
         setOptionsDisplayed(false);
-        setSearchResults(false);
+        setSearchResult(false);
+        setShowSearchResult(false);
       }
     };
 
@@ -69,14 +77,13 @@ const HomePage = () => {
 
   const searchCountryByName = async () => {
     const result = await getCountryByName(countryToSearch);
-
+    setShowSearchResult(true);
     if (result.status != 404) {
-      setSearchResults(result);
+      setSearchResult(result);
       console.log(result);
       setSearching(false);
       return;
     }
-    alert('not found');
     setSearching(false);
   };
 
@@ -100,11 +107,13 @@ const HomePage = () => {
       setSearching(true);
       console.log(`buscando... ${countryToSearch}`);
       await searchCountryByName();
+    } else {
+      toast.error('The search field cannot be empty');
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && countryToSearch.length > 0) {
+    if (e.key === 'Enter') {
       handleSearch();
     }
   };
@@ -127,7 +136,11 @@ const HomePage = () => {
         themeMode === 'dark' ? 'dark-mode-bg' : 'light-mode-bg'
       } min-h-screen transition-all`}>
       <Header />
-
+      <ToastContainer
+        pauseOnHover={false}
+        pauseOnFocusLoss={false}
+        theme={themeMode === 'dark' ? 'dark' : 'light'}
+      />
       <div className="px-4 md:px-14 xl:px-28 py-14">
         <div className="flex flex-col gap-16 lg:flex-row justify-between ">
           <div className="max-w-[32rem] md:w-[32rem]">
@@ -136,7 +149,10 @@ const HomePage = () => {
                 themeMode === 'dark' ? 'dark-mode-elements' : 'light-mode-elements'
               } flex items-center gap-2 px-6 rounded-md shadow-md transition-all`}>
               {searching ? (
-                <div className="sk-circle">
+                <div
+                  className={`${
+                    themeMode === 'dark' ? 'sk-circle bg-dark-mode' : 'sk-circle bg-light-mode'
+                  } `}>
                   <div className="sk-circle1 sk-child"></div>
                   <div className="sk-circle2 sk-child"></div>
                   <div className="sk-circle3 sk-child"></div>
@@ -151,13 +167,13 @@ const HomePage = () => {
                   <div className="sk-circle12 sk-child"></div>
                 </div>
               ) : (
-                <div>
+                <div className={`${countryToSearch.length === 0 && 'opacity-40'}`}>
                   <MdOutlineSearch
                     className={
                       countryToSearch.length > 0 && 'transition-all hover:scale-125 cursor-pointer'
                     }
                     size={28}
-                    color={countryToSearch.length > 0 ? '#28313d' : '#989fa8'}
+                    color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
                     onClick={handleSearch}
                   />
                 </div>
@@ -176,45 +192,51 @@ const HomePage = () => {
                 onChange={(e) => setCountryToSearch(e.target.value)}
                 onKeyDown={handleKeyDown}
               />
-              <div>
+              <div className={`${countryToSearch.length === 0 && 'opacity-40'}`}>
                 <MdClose
                   className={`light-mode-input ${
                     countryToSearch.length > 0 && 'transition-all hover:scale-125 cursor-pointer'
                   }`}
                   size={24}
-                  color={countryToSearch.length > 0 ? '#28313d' : '#989fa8'}
+                  color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
                   onClick={handleClearInput}
                 />
               </div>
             </div>
 
-            {searchResults.length > 0 && (
+            {showSearchResult && (
               <div
                 className={`${
                   themeMode === 'dark' ? 'dark-mode-elements' : 'light-mode-elements'
                 } absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg`}>
-                {searchResults.map((country) => (
-                  <div key={country.cca3}>
-                    <Link to={`/country-details/${country.name.common}`}>
-                      <div
-                        className={`pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer ${
-                          themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                        } `}>
-                        <img
-                          src={country?.flags?.png}
-                          alt={`Flag of ${country?.name?.common}`}
-                          className="w-[60px] select-none"
-                        />
-                        <p
-                          className={`${
-                            themeMode === 'dark' ? 'dark-mode-text' : 'light-mode-text'
-                          } font-[600] text-lg`}>
-                          {country?.name?.common}
-                        </p>
-                      </div>
-                    </Link>
+                {searchResult.length > 0 ? (
+                  searchResult.map((country) => (
+                    <div key={country.cca3}>
+                      <Link to={`/country-details/${country.name.common}`}>
+                        <div
+                          className={`pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer ${
+                            themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                          } `}>
+                          <img
+                            src={country?.flags?.png}
+                            alt={`Flag of ${country?.name?.common}`}
+                            className="w-[60px] select-none"
+                          />
+                          <p
+                            className={`${
+                              themeMode === 'dark' ? 'dark-mode-text' : 'light-mode-text'
+                            } font-[600] text-lg`}>
+                            {country?.name?.common}
+                          </p>
+                        </div>
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center p-6">
+                    <p className="text-white">Country not found</p>
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>
@@ -241,50 +263,16 @@ const HomePage = () => {
                     ? 'dark-mode-elements dark-mode-text'
                     : 'light-mode-elements light-mode-text'
                 } absolute w-64 mt-2 py-4 rounded-md shadow-md`}>
-                <div onClick={() => handleSelectRegion('Africa')}>
-                  <p
-                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
-                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                    }`}>
-                    Africa
-                  </p>
-                </div>
-
-                <div onClick={() => handleSelectRegion('Americas')}>
-                  <p
-                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
-                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                    }`}>
-                    America
-                  </p>
-                </div>
-
-                <div onClick={() => handleSelectRegion('Asia')}>
-                  <p
-                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
-                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                    }`}>
-                    Asia
-                  </p>
-                </div>
-
-                <div onClick={() => handleSelectRegion('Europe')}>
-                  <p
-                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
-                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                    }`}>
-                    Europe
-                  </p>
-                </div>
-
-                <div onClick={() => handleSelectRegion('Oceania')}>
-                  <p
-                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
-                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
-                    }`}>
-                    Oceania
-                  </p>
-                </div>
+                {regions.map((region, index) => (
+                  <div key={index} onClick={() => handleSelectRegion(region)}>
+                    <p
+                      className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                        themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                      }`}>
+                      {region}
+                    </p>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -312,7 +300,7 @@ const HomePage = () => {
 
           <div className="flex gap-3">
             {allCountries.length < 6 ? (
-              allCountries.map((groupOfCountries, index) => (
+              allCountries.map((_, index) => (
                 <PageButton
                   key={index}
                   pageIndex={pageIndex}

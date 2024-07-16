@@ -47,13 +47,24 @@
   left: 0;
   top: 0;
 }
-.sk-circle .sk-child:before {
+.bg-light-mode .sk-child:before {
   content: '';
   display: block;
   margin: 0 auto;
   width: 15%;
   height: 15%;
   background-color: #28313d;
+  border-radius: 100%;
+  -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+  animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+}
+.bg-dark-mode .sk-child:before {
+  content: '';
+  display: block;
+  margin: 0 auto;
+  width: 15%;
+  height: 15%;
+  background-color: #989fa8;
   border-radius: 100%;
   -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
   animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
