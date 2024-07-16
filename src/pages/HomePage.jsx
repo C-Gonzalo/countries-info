@@ -15,6 +15,7 @@ import {
 } from '../../api/services/countries.service';
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
+import PageButton from '../components/PageButton';
 import useThemeMode from '../hooks/useThemeMode';
 
 const HomePage = () => {
@@ -25,7 +26,7 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
-  const [page, setPage] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
 
   const { themeMode } = useThemeMode();
 
@@ -36,8 +37,8 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    setCountries(allCountries[page]);
-  }, [allCountries, page]);
+    setCountries(allCountries[pageIndex]);
+  }, [allCountries, pageIndex]);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -91,7 +92,7 @@ const HomePage = () => {
 
     await obtainCountriesByRegion(region);
 
-    setPage(0);
+    setPageIndex(0);
   };
 
   const handleSearch = async () => {
@@ -110,7 +111,7 @@ const HomePage = () => {
 
   const handlePage = (page) => {
     if (page >= 0 && page < allCountries.length) {
-      setPage(page);
+      setPageIndex(page);
     }
   };
 
@@ -197,7 +198,7 @@ const HomePage = () => {
                     <Link to={`/country-details/${country.name.common}`}>
                       <div
                         className={`pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer ${
-                          themeMode === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-slate-200'
+                          themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
                         } `}>
                         <img
                           src={country?.flags?.png}
@@ -241,50 +242,52 @@ const HomePage = () => {
                     : 'light-mode-elements light-mode-text'
                 } absolute w-64 mt-2 py-4 rounded-md shadow-md`}>
                 <div onClick={() => handleSelectRegion('Africa')}>
-                  <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
+                  <p
+                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                    }`}>
                     Africa
                   </p>
                 </div>
 
                 <div onClick={() => handleSelectRegion('Americas')}>
-                  <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
+                  <p
+                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                    }`}>
                     America
                   </p>
                 </div>
 
                 <div onClick={() => handleSelectRegion('Asia')}>
-                  <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
+                  <p
+                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                    }`}>
                     Asia
                   </p>
                 </div>
 
                 <div onClick={() => handleSelectRegion('Europe')}>
-                  <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
+                  <p
+                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                    }`}>
                     Europe
                   </p>
                 </div>
 
                 <div onClick={() => handleSelectRegion('Oceania')}>
-                  <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
+                  <p
+                    className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
+                      themeMode === 'dark' ? 'hover:bg-[#28313d]' : 'hover:bg-slate-200'
+                    }`}>
                     Oceania
                   </p>
                 </div>
               </div>
             )}
           </div>
-
-          {/* <div>
-            <select name="region" id="filterRegion" className="py-4 px-6 shadow-md">
-              <option value="" disabled selected hidden>
-                Filter by Region
-              </option>
-              <option value="africa">Africa</option>
-              <option value="africa">America</option>
-              <option value="africa">Asia</option>
-              <option value="africa">Europe</option>
-              <option value="africa">Oceania</option>
-            </select>
-          </div> */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-20">
@@ -293,105 +296,64 @@ const HomePage = () => {
         </div>
 
         <div className="flex justify-center gap-5 mt-24">
-          <div
-            className={`${page > 0 && 'cursor-pointer'} text-md light-mode-text font-[600]`}
-            onClick={() => handlePage(page - 1)}>
+          <button
+            type="button"
+            className={`${
+              pageIndex > 0 && 'cursor-pointer'
+            } text-md light-mode-text font-[600] disabled:opacity-30`}
+            onClick={() => handlePage(pageIndex - 1)}
+            disabled={pageIndex === 0}>
             <MdArrowBack
               size={26}
-              color={page == 0 ? '#989fa8' : '#28313d'}
-              className={page > 0 && 'transition-all hover:scale-125'}
+              color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
+              className={pageIndex > 0 && 'transition-all hover:scale-125'}
             />
-          </div>
+          </button>
 
           <div className="flex gap-3">
-            {/* {allCountries.map((ctr, index) => ( */}
-            <div
-              className={`border-[1px] px-2 rounded-md cursor-pointer  ${
-                page === 0
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(0)}>
-              1
-            </div>
-            {/* ))} */}
+            {allCountries.length < 6 ? (
+              allCountries.map((groupOfCountries, index) => (
+                <PageButton
+                  key={index}
+                  pageIndex={pageIndex}
+                  setPageIndex={setPageIndex}
+                  buttonNumber={index + 1}
+                />
+              ))
+            ) : (
+              <>
+                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={1} />
+                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={2} />
+                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={3} />
+                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={4} />
+                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={5} />
 
-            <button
-              className={`border-[1px] px-2 rounded-md  ${
-                page === 1
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black'
-              }`}
-              onClick={() => setPage(1)}>
-              2
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page === 2
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(2)}>
-              3
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page === 3
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(3)}>
-              4
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page === 4
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(4)}>
-              5
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page === 5
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(5)}>
-              6
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page === 6
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(6)}>
-              7
-            </button>
-            <button
-              className={` border-[1px] px-2 rounded-md ${
-                page >= 7
-                  ? 'bg-slate-100 text-black border-black'
-                  : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-              }`}
-              onClick={() => setPage(7)}>
-              {page > 7 ? page + 1 : 8}
-            </button>
+                <button
+                  type="button"
+                  disabled={pageIndex >= 5}
+                  className={` border-[1px] px-2 rounded-md ${
+                    pageIndex >= 5
+                      ? 'bg-slate-100 text-black border-black'
+                      : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+                  }`}
+                  onClick={() => setPageIndex(5)}>
+                  {pageIndex > 5 ? pageIndex + 1 : 6}
+                </button>
+              </>
+            )}
           </div>
 
-          <div
-            className={`${
-              page + 1 < allCountries.length && 'cursor-pointer'
-            } text-md light-mode-text font-[600]`}
-            onClick={() => handlePage(page + 1)}>
+          <button
+            type="button"
+            className={'text-md light-mode-text font-[600] disabled:opacity-30'}
+            disabled={pageIndex + 1 === allCountries.length}
+            onClick={() => handlePage(pageIndex + 1)}>
             <MdArrowForward
               size={26}
-              color={page + 1 < allCountries.length ? '#28313d' : '#989fa8'}
-              className={page + 1 < allCountries.length && 'transition-all hover:scale-125'}
+              color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
+              className={pageIndex + 1 < allCountries.length && 'transition-all hover:scale-125'}
             />
-          </div>
+          </button>
         </div>
       </div>
     </div>
