@@ -15,6 +15,7 @@ import {
 } from '../../api/services/countries.service';
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
+import useThemeMode from '../hooks/useThemeMode';
 
 const HomePage = () => {
   const [allCountries, setAllCountries] = useState([]);
@@ -25,6 +26,8 @@ const HomePage = () => {
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
   const [regionSelectValue, setRegionSelectValue] = useState('');
   const [page, setPage] = useState(0);
+
+  const { themeMode } = useThemeMode();
 
   const ref = useRef();
 
@@ -118,13 +121,19 @@ const HomePage = () => {
   };
 
   return (
-    <div className="light-mode-bg h-screen">
+    <div
+      className={`${
+        themeMode === 'dark' ? 'dark-mode-bg' : 'light-mode-bg'
+      } min-h-screen transition-all`}>
       <Header />
 
       <div className="px-4 md:px-14 xl:px-28 py-14">
         <div className="flex flex-col gap-16 lg:flex-row justify-between ">
           <div className="max-w-[32rem] md:w-[32rem]">
-            <div className="light-mode-elements flex items-center gap-2 px-6 rounded-md shadow-md">
+            <div
+              className={`${
+                themeMode === 'dark' ? 'dark-mode-elements' : 'light-mode-elements'
+              } flex items-center gap-2 px-6 rounded-md shadow-md transition-all`}>
               {searching ? (
                 <div className="sk-circle">
                   <div className="sk-circle1 sk-child"></div>
@@ -158,7 +167,11 @@ const HomePage = () => {
                 type="text"
                 value={countryToSearch}
                 placeholder="Search for a country..."
-                className="py-5 pl-4 w-full font-[600] outline-none"
+                className={`${
+                  themeMode === 'dark'
+                    ? 'dark-mode-elements dark-mode-text'
+                    : 'light-mode-elements light-mode-text'
+                } py-5 pl-4 w-full font-[600] outline-none transition-all`}
                 onChange={(e) => setCountryToSearch(e.target.value)}
                 onKeyDown={handleKeyDown}
               />
@@ -175,17 +188,26 @@ const HomePage = () => {
             </div>
 
             {searchResults.length > 0 && (
-              <div className="light-mode-elements absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg">
+              <div
+                className={`${
+                  themeMode === 'dark' ? 'dark-mode-elements' : 'light-mode-elements'
+                } absolute w-[19rem] sm:w-[23rem] mt-2 rounded-md shadow-lg`}>
                 {searchResults.map((country) => (
                   <div key={country.cca3}>
                     <Link to={`/country-details/${country.name.common}`}>
-                      <div className="pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer hover:bg-slate-200">
+                      <div
+                        className={`pl-6 py-5 flex items-center gap-4 rounded-md cursor-pointer ${
+                          themeMode === 'dark' ? 'hover:bg-slate-700' : 'hover:bg-slate-200'
+                        } `}>
                         <img
                           src={country?.flags?.png}
                           alt={`Flag of ${country?.name?.common}`}
-                          className="w-[60px]"
+                          className="w-[60px] select-none"
                         />
-                        <p className="light-mode-text font-[600] text-lg">
+                        <p
+                          className={`${
+                            themeMode === 'dark' ? 'dark-mode-text' : 'light-mode-text'
+                          } font-[600] text-lg`}>
                           {country?.name?.common}
                         </p>
                       </div>
@@ -198,16 +220,26 @@ const HomePage = () => {
 
           <div className="w-64" ref={ref}>
             <div
-              className="light-mode-elements flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer"
+              className={`${
+                themeMode === 'dark' ? 'dark-mode-elements ' : 'light-mode-elements'
+              } flex justify-between items-center py-5 pl-6 pr-4 rounded-md shadow-md cursor-pointer transition-all`}
               onClick={handleDisplayOptions}>
-              <p className="light-mode-text font-[600]">
+              <p
+                className={`${
+                  themeMode === 'dark' ? 'dark-mode-text' : 'light-mode-text'
+                } font-[600]`}>
                 {regionSelectValue ? regionSelectValue : 'Filter by Region'}
               </p>
-              <MdKeyboardArrowDown size={22} />
+              <MdKeyboardArrowDown size={22} color={themeMode === 'dark' ? 'white' : 'black'} />
             </div>
 
             {optionsDisplayed && (
-              <div className="light-mode-elements absolute w-64 mt-2 py-4 rounded-md shadow-md">
+              <div
+                className={`${
+                  themeMode === 'dark'
+                    ? 'dark-mode-elements dark-mode-text'
+                    : 'light-mode-elements light-mode-text'
+                } absolute w-64 mt-2 py-4 rounded-md shadow-md`}>
                 <div onClick={() => handleSelectRegion('Africa')}>
                   <p className="font-[600] text-lg py-[6px] pl-6 hover:bg-slate-200 cursor-pointer">
                     Africa
