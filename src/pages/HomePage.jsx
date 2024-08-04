@@ -7,7 +7,7 @@ import {
   MdKeyboardArrowDown,
   MdOutlineSearch,
 } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -30,12 +30,18 @@ const HomePage = () => {
   const [showSearchResult, setShowSearchResult] = useState(false);
 
   const [optionsDisplayed, setOptionsDisplayed] = useState(false);
-  const [regionSelectValue, setRegionSelectValue] = useState('');
+  // const [regionSelectValue, setRegionSelectValue] = useState('');
   const [pageIndex, setPageIndex] = useState(0);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const { themeMode } = useThemeMode();
 
   const ref = useRef();
+
+  const queryParams = new URLSearchParams(location.search);
+  const region = queryParams.get('region');
 
   const regions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
 
@@ -46,6 +52,14 @@ const HomePage = () => {
   useEffect(() => {
     setCountries(allCountries[pageIndex]);
   }, [allCountries, pageIndex]);
+
+  useEffect(() => {
+    if (region && regions.includes(region)) {
+      obtainCountriesByRegion(region);
+    } else {
+      navigate('/');
+    }
+  }, [region]);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -93,11 +107,14 @@ const HomePage = () => {
   };
 
   const handleSelectRegion = async (region) => {
+    queryParams.set('region', region);
+    navigate(`${location.pathname}?${queryParams.toString()}`);
+
     console.log(`Region ${region} selected`);
-    setRegionSelectValue(region);
+    // setRegionSelectValue(region);
     setOptionsDisplayed(false);
 
-    await obtainCountriesByRegion(region);
+    // await obtainCountriesByRegion(region);
 
     setPageIndex(0);
   };
@@ -251,7 +268,7 @@ const HomePage = () => {
                 className={`${
                   themeMode === 'dark' ? 'dark-mode-text' : 'light-mode-text'
                 } font-[600]`}>
-                {regionSelectValue ? regionSelectValue : 'Filter by Region'}
+                {region ? region : 'Filter by Region'}
               </p>
               <MdKeyboardArrowDown size={22} color={themeMode === 'dark' ? 'white' : 'black'} />
             </div>

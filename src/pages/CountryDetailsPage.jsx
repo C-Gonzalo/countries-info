@@ -33,11 +33,11 @@ const CountryDetailsPage = () => {
   };
 
   const filterCurrency = () => {
-    const keys = Object.keys(country.currencies);
+    const keys = Object.keys(country?.currencies);
 
     if (keys.length > 0) {
       const firstKey = keys[0];
-      const firstValue = country.currencies[firstKey];
+      const firstValue = country?.currencies[firstKey];
 
       const filteredCurrency = firstValue.name;
       return filteredCurrency;
@@ -54,14 +54,14 @@ const CountryDetailsPage = () => {
 
   const obtainCountry = async () => {
     const obtainedCountry = await getCountryByExactName(name);
-    const obtainedBorder = getBorderCountries(obtainedCountry.borders);
+    if (!obtainedCountry) {
+      return navigate('/404');
+    }
+
+    await getBorderCountries(obtainedCountry.borders);
 
     console.log(obtainedCountry);
     setCountry(obtainedCountry);
-    console.log(obtainedBorder);
-    if (borderCountries) {
-      setBorderCountries(obtainedBorder);
-    }
   };
 
   const getBorderCountries = async (codes) => {
@@ -103,11 +103,11 @@ const CountryDetailsPage = () => {
           </div>
 
           <div className="xl:flex mt-16 md:mt-24 xl:mt-12 gap-10">
-            <div className=" xl:w-1/2 flex items-center md:justify-center xl:justify-start">
+            <div className="xl:w-1/2 flex items-center md:justify-center xl:justify-start">
               <img
                 src={country?.flags?.svg}
                 alt={`Flag of ${country?.name?.common}`}
-                className="w-[100%] md:w-[600px] select-none"
+                className="w-[100%] md:w-[600px] select-none shadow-md"
               />
             </div>
 
@@ -159,9 +159,9 @@ const CountryDetailsPage = () => {
 
               <div className="flex flex-col md:flex-row gap-5 md:items-center">
                 <p className=" text-lg font-[600]">Border Countries: </p>
-                <div className="flex items-center py-2 md:px-3 gap-6 flex-wrap xl:overflow-y-auto xl:max-h-[100px]">
-                  {borderCountries.length > 0 &&
-                    borderCountries.map((bCountry, index) => (
+                <div className="flex items-center py-2 md:px-3 gap-6 flex-wrap xl:overflow-y-auto xl:max-h-[120px]">
+                  {borderCountries.length > 0 ? (
+                    borderCountries?.map((bCountry, index) => (
                       <div key={index}>
                         <Link to={`/country-details/${bCountry}`}>
                           <div
@@ -172,7 +172,10 @@ const CountryDetailsPage = () => {
                           </div>
                         </Link>
                       </div>
-                    ))}
+                    ))
+                  ) : (
+                    <p>None</p>
+                  )}
                 </div>
               </div>
             </div>
