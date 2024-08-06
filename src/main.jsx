@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { ThemeProvider } from './context/ThemeProvider.jsx';
 import './index.css';
 import CountryDetailsPage from './pages/CountryDetailsPage.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: 'country-details/:name',
     element: <CountryDetailsPage />,
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
 

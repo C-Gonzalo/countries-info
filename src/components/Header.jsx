@@ -25,14 +25,14 @@ const Header = () => {
             className="w-[118px] flex items-center gap-2 cursor-pointer select-none"
             onClick={handleThemeMode}>
             <FaSun color="white" />
-            <p className="dark-mode-text md:text-lg font-[600]">Light Mode</p>
+            <p className="dark-mode-text font-[600]">Light Mode</p>
           </div>
         ) : (
           <div
             className="w-[118px] flex items-center gap-2 cursor-pointer select-none"
             onClick={handleThemeMode}>
             <FaMoon color="#28313d" />
-            <p className="light-mode-text md:text-lg font-[600]">Dark Mode</p>
+            <p className="light-mode-text font-[600]">Dark Mode</p>
           </div>
         )}
       </div>

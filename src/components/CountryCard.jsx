@@ -11,13 +11,11 @@ const CountryCard = ({ country }) => {
         themeMode === 'dark'
           ? 'dark-mode-elements dark-mode-text'
           : 'light-mode-elements light-mode-text'
-      } w-[320px] lg:w-[400px] xl:w-[100%] h-[452px] mx-auto rounded-lg shadow-md cursor-pointer transition-all hover:duration-200 hover:scale-110 hover:shadow-2xl`}>
+      } w-[320px] lg:w-[400px] xl:w-[100%]  mx-auto rounded-lg shadow-md cursor-pointer transition-all hover:duration-200 hover:scale-110 hover:shadow-2xl`}>
       <Link to={`/country-details/${country.name.common}`}>
-        <div className="w-[320px] lg:w-[400px] xl:w-[100%]">
-          {/* <div className="bg-sky-500 h-48 rounded-t-md"></div> */}
-
+        <div className="min-h-[410px]">
           <img
-            className="w-[320px] lg:w-[400px] max-h-[272px] rounded-t-lg select-none"
+            className="w-[100%] rounded-t-lg select-none"
             src={country.flags.png}
             alt={`Flag of ${country.name.common}`}
           />
