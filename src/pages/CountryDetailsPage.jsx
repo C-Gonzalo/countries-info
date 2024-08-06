@@ -59,22 +59,16 @@ const CountryDetailsPage = () => {
     }
 
     await getBorderCountries(obtainedCountry.borders);
-
-    console.log(obtainedCountry);
     setCountry(obtainedCountry);
   };
 
   const getBorderCountries = async (codes) => {
     const borderCountries = await getCountryNameByCode(codes);
 
-    console.log('BORDER COUNTRIES', borderCountries);
-
     if (borderCountries) {
       const filteredCountriesName = borderCountries.map((country) => {
-        console.log(name);
         return country?.name?.common;
       });
-      console.log(filteredCountriesName);
 
       setBorderCountries(filteredCountriesName);
     }

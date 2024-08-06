@@ -18,6 +18,7 @@ import {
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 import PageButton from '../components/PageButton';
+import { REGIONS } from '../constants/constants';
 import useThemeMode from '../hooks/useThemeMode';
 
 const HomePage = () => {
@@ -29,9 +30,7 @@ const HomePage = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [showSearchResult, setShowSearchResult] = useState(false);
 
-  const [optionsDisplayed, setOptionsDisplayed] = useState(false);
-  // const [regionSelectValue, setRegionSelectValue] = useState('');
-  const [pageIndex, setPageIndex] = useState(0);
+  const [regionsDisplayed, setRegionsDisplayed] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,28 +42,33 @@ const HomePage = () => {
   const queryParams = new URLSearchParams(location.search);
   const region = queryParams.get('region');
 
-  const regions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania'];
+  const queryPage = queryParams.get('page');
+  const page = queryPage ? +queryPage : 1;
 
   useEffect(() => {
-    obtainCountries();
-  }, []);
+    if (allCountries.length && page && (page < 0 || page > allCountries.length))
+      return navigate('/');
+
+    setCountries(allCountries[page - 1]);
+  }, [allCountries, page]);
 
   useEffect(() => {
-    setCountries(allCountries[pageIndex]);
-  }, [allCountries, pageIndex]);
-
-  useEffect(() => {
-    if (region && regions.includes(region)) {
-      obtainCountriesByRegion(region);
-    } else {
-      navigate('/');
+    if (region) {
+      if (REGIONS.includes(region)) {
+        obtainCountriesByRegion(region);
+        return;
+      } else {
+        navigate('/');
+      }
     }
+
+    obtainCountries();
   }, [region]);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        setOptionsDisplayed(false);
+        setRegionsDisplayed(false);
         setSearchResult(false);
         setShowSearchResult(false);
       }
@@ -94,7 +98,6 @@ const HomePage = () => {
     setShowSearchResult(true);
     if (result.status != 404) {
       setSearchResult(result);
-      console.log(result);
       setSearching(false);
       return;
     }
@@ -102,27 +105,20 @@ const HomePage = () => {
   };
 
   const handleDisplayOptions = () => {
-    console.log('Select Opened');
-    setOptionsDisplayed(!optionsDisplayed);
+    setRegionsDisplayed(!regionsDisplayed);
   };
 
   const handleSelectRegion = async (region) => {
     queryParams.set('region', region);
+    queryParams.set('page', 1);
     navigate(`${location.pathname}?${queryParams.toString()}`);
 
-    console.log(`Region ${region} selected`);
-    // setRegionSelectValue(region);
-    setOptionsDisplayed(false);
-
-    // await obtainCountriesByRegion(region);
-
-    setPageIndex(0);
+    setRegionsDisplayed(false);
   };
 
   const handleSearch = async () => {
     if (countryToSearch.length > 0) {
       setSearching(true);
-      console.log(`buscando... ${countryToSearch}`);
       await searchCountryByName();
     } else {
       toast.error('The search field cannot be empty');
@@ -135,9 +131,14 @@ const HomePage = () => {
     }
   };
 
-  const handlePage = (page) => {
-    if (page >= 0 && page < allCountries.length) {
-      setPageIndex(page);
+  const handleQueryParamsPage = (page) => {
+    queryParams.set('page', page);
+    navigate(`${location.pathname}?${queryParams.toString()}`);
+  };
+
+  const handlePageWithArrows = (page) => {
+    if (page >= 0 && page <= allCountries.length) {
+      handleQueryParamsPage(page);
     }
   };
 
@@ -273,14 +274,14 @@ const HomePage = () => {
               <MdKeyboardArrowDown size={22} color={themeMode === 'dark' ? 'white' : 'black'} />
             </div>
 
-            {optionsDisplayed && (
+            {regionsDisplayed && (
               <div
                 className={`${
                   themeMode === 'dark'
                     ? 'dark-mode-elements dark-mode-text'
                     : 'light-mode-elements light-mode-text'
                 } absolute w-64 mt-2 py-4 rounded-md shadow-md`}>
-                {regions.map((region, index) => (
+                {REGIONS.map((region, index) => (
                   <div key={index} onClick={() => handleSelectRegion(region)}>
                     <p
                       className={`font-[600] text-lg py-[6px] pl-6 cursor-pointer  ${
@@ -304,14 +305,14 @@ const HomePage = () => {
           <button
             type="button"
             className={`${
-              pageIndex > 0 && 'cursor-pointer'
+              page > 1 && 'cursor-pointer'
             } text-md light-mode-text font-[600] disabled:opacity-30`}
-            onClick={() => handlePage(pageIndex - 1)}
-            disabled={pageIndex === 0}>
+            onClick={() => handlePageWithArrows(page - 1)}
+            disabled={page === 1}>
             <MdArrowBack
               size={26}
               color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
-              className={pageIndex > 0 && 'transition-all hover:scale-125'}
+              className={page > 1 && 'transition-all hover:scale-125'}
             />
           </button>
 
@@ -320,29 +321,49 @@ const HomePage = () => {
               allCountries.map((_, index) => (
                 <PageButton
                   key={index}
-                  pageIndex={pageIndex}
-                  setPageIndex={setPageIndex}
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
                   buttonNumber={index + 1}
                 />
               ))
             ) : (
               <>
-                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={1} />
-                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={2} />
-                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={3} />
-                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={4} />
-                <PageButton pageIndex={pageIndex} setPageIndex={setPageIndex} buttonNumber={5} />
+                <PageButton
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
+                  buttonNumber={1}
+                />
+                <PageButton
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
+                  buttonNumber={2}
+                />
+                <PageButton
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
+                  buttonNumber={3}
+                />
+                <PageButton
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
+                  buttonNumber={4}
+                />
+                <PageButton
+                  page={page}
+                  handleQueryParamsPage={handleQueryParamsPage}
+                  buttonNumber={5}
+                />
 
                 <button
                   type="button"
-                  disabled={pageIndex >= 5}
+                  disabled={page >= 6}
                   className={` border-[1px] px-2 rounded-md ${
-                    pageIndex >= 5
+                    page >= 6
                       ? 'bg-slate-100 text-black border-black'
                       : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
                   }`}
-                  onClick={() => setPageIndex(5)}>
-                  {pageIndex > 5 ? pageIndex + 1 : 6}
+                  onClick={() => handleQueryParamsPage(6)}>
+                  {page > 6 ? page : 6}
                 </button>
               </>
             )}
@@ -351,12 +372,12 @@ const HomePage = () => {
           <button
             type="button"
             className={'text-md light-mode-text font-[600] disabled:opacity-30'}
-            disabled={pageIndex + 1 === allCountries.length}
-            onClick={() => handlePage(pageIndex + 1)}>
+            disabled={page === allCountries.length}
+            onClick={() => handlePageWithArrows(page + 1)}>
             <MdArrowForward
               size={26}
               color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
-              className={pageIndex + 1 < allCountries.length && 'transition-all hover:scale-125'}
+              className={page < allCountries.length && 'transition-all hover:scale-125'}
             />
           </button>
         </div>
