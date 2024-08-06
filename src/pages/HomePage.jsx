@@ -18,12 +18,14 @@ import {
 import CountryCard from '../components/CountryCard';
 import Header from '../components/Header';
 import PageButton from '../components/PageButton';
+import Spinner from '../components/Spinner';
 import { REGIONS } from '../constants/constants';
 import useThemeMode from '../hooks/useThemeMode';
 
 const HomePage = () => {
   const [allCountries, setAllCountries] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [loadingCountries, setLoadingCountries] = useState(true);
 
   const [searching, setSearching] = useState(false);
   const [countryToSearch, setCountryToSearch] = useState('');
@@ -85,16 +87,19 @@ const HomePage = () => {
     const obtainedAllCountries = await getAllCountries();
 
     setAllCountries(obtainedAllCountries);
+    setLoadingCountries(false);
   };
 
   const obtainCountriesByRegion = async (region) => {
     const obtainedRegionCountries = await getCountriesByRegion(region);
 
     setAllCountries(obtainedRegionCountries);
+    setLoadingCountries(false);
   };
 
   const searchCountryByName = async () => {
     const result = await getCountryByName(countryToSearch);
+    console.log(result.status);
     setShowSearchResult(true);
     if (result.status != 404) {
       setSearchResult(result);
@@ -167,23 +172,7 @@ const HomePage = () => {
                 themeMode === 'dark' ? 'dark-mode-elements' : 'light-mode-elements'
               } flex items-center gap-2 px-6 rounded-md shadow-md transition-all`}>
               {searching ? (
-                <div
-                  className={`${
-                    themeMode === 'dark' ? 'sk-circle bg-dark-mode' : 'sk-circle bg-light-mode'
-                  } `}>
-                  <div className="sk-circle1 sk-child"></div>
-                  <div className="sk-circle2 sk-child"></div>
-                  <div className="sk-circle3 sk-child"></div>
-                  <div className="sk-circle4 sk-child"></div>
-                  <div className="sk-circle5 sk-child"></div>
-                  <div className="sk-circle6 sk-child"></div>
-                  <div className="sk-circle7 sk-child"></div>
-                  <div className="sk-circle8 sk-child"></div>
-                  <div className="sk-circle9 sk-child"></div>
-                  <div className="sk-circle10 sk-child"></div>
-                  <div className="sk-circle11 sk-child"></div>
-                  <div className="sk-circle12 sk-child"></div>
-                </div>
+                <Spinner />
               ) : (
                 <div className={`${countryToSearch.length === 0 && 'opacity-40'}`}>
                   <MdOutlineSearch
@@ -296,91 +285,99 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-20">
-          {countries &&
-            countries.map((country) => <CountryCard key={country.cca3} country={country} />)}
-        </div>
-
-        <div className="flex justify-center gap-5 mt-24">
-          <button
-            type="button"
-            className={`${
-              page > 1 && 'cursor-pointer'
-            } text-md light-mode-text font-[600] disabled:opacity-30`}
-            onClick={() => handlePageWithArrows(page - 1)}
-            disabled={page === 1}>
-            <MdArrowBack
-              size={26}
-              color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
-              className={page > 1 && 'transition-all hover:scale-125'}
-            />
-          </button>
-
-          <div className="flex gap-3">
-            {allCountries.length < 6 ? (
-              allCountries.map((_, index) => (
-                <PageButton
-                  key={index}
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={index + 1}
-                />
-              ))
-            ) : (
-              <>
-                <PageButton
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={1}
-                />
-                <PageButton
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={2}
-                />
-                <PageButton
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={3}
-                />
-                <PageButton
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={4}
-                />
-                <PageButton
-                  page={page}
-                  handleQueryParamsPage={handleQueryParamsPage}
-                  buttonNumber={5}
-                />
-
-                <button
-                  type="button"
-                  disabled={page >= 6}
-                  className={` border-[1px] px-2 rounded-md ${
-                    page >= 6
-                      ? 'bg-slate-100 text-black border-black'
-                      : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
-                  }`}
-                  onClick={() => handleQueryParamsPage(6)}>
-                  {page > 6 ? page : 6}
-                </button>
-              </>
-            )}
+        {loadingCountries ? (
+          <div className="flex justify-center mt-40">
+            <Spinner />
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mt-14 gap-14 md:gap-14 lg:gap-20">
+              {countries &&
+                countries.map((country) => <CountryCard key={country.cca3} country={country} />)}
+            </div>
 
-          <button
-            type="button"
-            className={'text-md light-mode-text font-[600] disabled:opacity-30'}
-            disabled={page === allCountries.length}
-            onClick={() => handlePageWithArrows(page + 1)}>
-            <MdArrowForward
-              size={26}
-              color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
-              className={page < allCountries.length && 'transition-all hover:scale-125'}
-            />
-          </button>
-        </div>
+            <div className="flex justify-center gap-5 mt-24">
+              <button
+                type="button"
+                className={`${
+                  page > 1 && 'cursor-pointer'
+                } text-md light-mode-text font-[600] disabled:opacity-30`}
+                onClick={() => handlePageWithArrows(page - 1)}
+                disabled={page === 1}>
+                <MdArrowBack
+                  size={26}
+                  color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
+                  className={page > 1 && 'transition-all hover:scale-125'}
+                />
+              </button>
+
+              <div className="flex gap-3">
+                {allCountries.length < 6 ? (
+                  allCountries.map((_, index) => (
+                    <PageButton
+                      key={index}
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={index + 1}
+                    />
+                  ))
+                ) : (
+                  <>
+                    <PageButton
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={1}
+                    />
+                    <PageButton
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={2}
+                    />
+                    <PageButton
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={3}
+                    />
+                    <PageButton
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={4}
+                    />
+                    <PageButton
+                      page={page}
+                      handleQueryParamsPage={handleQueryParamsPage}
+                      buttonNumber={5}
+                    />
+
+                    <button
+                      type="button"
+                      disabled={page >= 6}
+                      className={` border-[1px] px-2 rounded-md ${
+                        page >= 6
+                          ? 'bg-slate-100 text-black border-black'
+                          : 'bg-[#28313d] text-slate-100 border-[#28313d] hover:bg-slate-100 hover:text-black transition-all'
+                      }`}
+                      onClick={() => handleQueryParamsPage(6)}>
+                      {page > 6 ? page : 6}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <button
+                type="button"
+                className={'text-md light-mode-text font-[600] disabled:opacity-30'}
+                disabled={page === allCountries.length}
+                onClick={() => handlePageWithArrows(page + 1)}>
+                <MdArrowForward
+                  size={26}
+                  color={themeMode === 'dark' ? '#989fa8' : '#28313d'}
+                  className={page < allCountries.length && 'transition-all hover:scale-125'}
+                />
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

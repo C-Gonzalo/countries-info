@@ -4,11 +4,13 @@ import { IoIosArrowRoundBack } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCountryByExactName, getCountryNameByCode } from '../../api/services/countries.service';
 import Header from '../components/Header';
+import Spinner from '../components/Spinner';
 import useThemeMode from '../hooks/useThemeMode';
 
 const CountryDetailsPage = () => {
   const [country, setCountry] = useState(null);
   const [borderCountries, setBorderCountries] = useState([]);
+  const [loadingCountry, setLoadingCountry] = useState(true);
 
   const { themeMode } = useThemeMode();
 
@@ -60,6 +62,7 @@ const CountryDetailsPage = () => {
 
     await getBorderCountries(obtainedCountry.borders);
     setCountry(obtainedCountry);
+    setLoadingCountry(false);
   };
 
   const getBorderCountries = async (codes) => {
@@ -81,7 +84,11 @@ const CountryDetailsPage = () => {
       } min-h-screen transition-all`}>
       <Header />
 
-      {country && (
+      {loadingCountry ? (
+        <div className="flex justify-center mt-40">
+          <Spinner />
+        </div>
+      ) : (
         <div className="light-mode-text px-6 md:px-14 xl:px-28 py-4 md:py-14 xl:py-8 mt-8">
           <div className="flex">
             <div
